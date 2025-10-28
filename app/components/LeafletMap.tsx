@@ -29,11 +29,13 @@ export default function LeafletMap({
   onMarkerMove,
   setMap,
   updateMarker,
+  updateSelectedMarker,
 }: {
   markers: MarkerType[];
   onMarkerMove: (index: number, newPosition: L.LatLngExpression) => void;
   setMap: Ref<Map>;
   updateMarker: Function;
+  updateSelectedMarker: Function;
 }) {
   const [iconUrl, setIconUrl] = useState<string>("");
   const [color, setColor] = useState("#FF008A");
@@ -43,8 +45,8 @@ export default function LeafletMap({
       click(e) {
         // setState your coords here
         // coords exist in "e.latlng.lat" and "e.latlng.lng"
-        console.log(e.latlng.lat);
-        console.log(e.latlng.lng);
+        console.log(e.latlng.lat, e.latlng.lng);
+        updateSelectedMarker(-1);
       },
     });
     return null;
@@ -62,7 +64,7 @@ export default function LeafletMap({
         ref={setMap}
         scrollWheelZoom={true}
         style={{ height: "100%", width: "100%" }}>
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" noWrap />
         <MapEvents />
         {markers.map((marker: MarkerType, i: number) => (
           <Marker
@@ -82,12 +84,26 @@ export default function LeafletMap({
             position={marker.position}
             eventHandlers={{
               add: (e) => {
-                console.log("Added ", e.target);
                 updateMarker(i, "ref", e.target);
               },
+              dragstart: (e) => {
+                console.log("drag start");
+                // updateSelectedMarker(i);
+              },
               dragend: (e) => {
+                console.log("drag end");
                 const latLng = e.target.getLatLng();
                 onMarkerMove(i, [latLng.lat, latLng.lng] as [number, number]);
+              },
+              mouseover: (e) => {
+                updateSelectedMarker(i);
+              },
+              mouseout: (e) => {
+                if (marker.ref?.isPopupOpen()) return;
+                updateSelectedMarker(-1);
+              },
+              click: (e) => {
+                updateSelectedMarker(i);
               },
             }}>
             <Popup>{marker.title}</Popup>

@@ -41,6 +41,13 @@ main {
   .map {
     flex: 1;
   }
+
+  .panel {
+    h1 {
+      text-align: center;
+      margin: 0;
+    }
+  }
 }
 
 .markers {
@@ -48,7 +55,9 @@ main {
     line-height: 1em;
     padding: 4px 3px;
 
-    border-left: 3px solid var(--primary);
+    &.active {
+      border-left: 3px solid var(--primary);
+    }
 
     .Header {
       display: flex;
@@ -61,7 +70,7 @@ main {
         padding: 0px 2px;
       }
 
-      .deleteBtn {
+      button {
         cursor: pointer;
         opacity: 0.5;
         width: 20px;
@@ -76,4 +85,9 @@ main {
       background-color: rgba(0, 0, 0, 0.052);
     }
   }
+}
+
+.elem_resize_handle {
+  border-top: 2px dashed var(--primary);
+  border-left: 2px dashed var(--primary);
 }
