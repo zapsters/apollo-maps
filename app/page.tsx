@@ -127,10 +127,36 @@ export default function MapPage({
         <Panel id="addMarkers-panel" defaultSize={defaultLayout[1]} className="panel addMarker">
           <h1>Add marker</h1>
           <hr />
-          <ul>
-            <li>Item 1</li>
-            <li>Item 2</li>
-          </ul>
+          <form method="" className="marker-create">
+            <div>
+              <label htmlFor="marker-create-latLang">Title: </label>
+              <input
+                type="text"
+                id="marker-create-title"
+                title="Marker Title"
+                name="title"
+                placeholder="Marker Title"
+              />
+            </div>
+            <div>
+              <label htmlFor="marker-create-latLang">Coordinates: </label>
+              <input
+                type="text"
+                id="marker-create-latLang"
+                name="latLang"
+                title="Marker 'Latitude, Longitude'"
+                placeholder="Latitude, Longitude"
+              />
+            </div>
+            <textarea
+              className="textarea description"
+              name="Maker Description"
+              placeholder="description..."
+              id="marker-create-description"></textarea>
+            <button className="buttonMain" type="submit">
+              Create Marker
+            </button>
+          </form>
         </Panel>
       </PanelGroup>
 
