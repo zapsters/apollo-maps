@@ -21,7 +21,13 @@ export default function MapPage({
   const [map, setMap] = useState<L.Map | null>(null);
   const [selectedMarker, setSelectedMarker] = useState<number | null>(null);
   const [markers, setMarkers] = useState<MarkerType[]>([
-    { title: "Home", position: [39.818882, -85.921996], draggable: false },
+    {
+      title: "Home",
+      description:
+        "<b>Hi!</b> well this contains LOTS! of text and it will run on so this is testing that! well this contains LOTS! of text and it will run on so this is testing that! well this contains LOTS! of text and it will run on so this is testing that! well this contains LOTS! of text and it will run on so this is testing that! ",
+      position: [39.818882, -85.921996],
+      draggable: false,
+    },
     { title: "Home", position: [39.808882, -85.921996], draggable: false },
     { title: "b", position: [39.808882, -85.91], draggable: true },
   ]);
@@ -79,6 +85,7 @@ export default function MapPage({
                     onChange={(e) => updateMarker(i, "title", e.target.value)}
                   />
                   <button
+                    title={marker.draggable ? "Lock dragging" : "Unlock dragging"}
                     onClick={(e) => {
                       updateMarker(i, "draggable", !marker.draggable);
                     }}>
@@ -89,13 +96,20 @@ export default function MapPage({
                     />
                   </button>
                   <button
+                    title="Delete Marker"
                     onClick={(e) => {
                       deleteMarker(i);
                     }}>
                     <img className="deleteBtn" src="close.svg" alt="X" />
                   </button>
                 </div>
-                <span style={{ fontSize: 9 }}>
+                <textarea
+                  className="textarea description"
+                  placeholder="description..."
+                  value={marker.description}
+                  onChange={(e) => updateMarker(i, "description", e.target.value)}
+                />
+                <p style={{ fontSize: 9, margin: 0 }}>
                   {Array.isArray(marker.position)
                     ? marker.position
                         .filter((val): val is number => val !== undefined)
@@ -104,7 +118,7 @@ export default function MapPage({
                     : `${Math.round(marker.position.lat * 1000) / 1000}, ${
                         Math.round(marker.position.lng * 1000) / 1000
                       }`}
-                </span>
+                </p>
               </li>
             ))}
           </ul>

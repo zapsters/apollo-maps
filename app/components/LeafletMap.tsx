@@ -6,6 +6,7 @@ import L, { Draggable, Map } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useMapEvents } from "react-leaflet";
 import { MarkerType } from "../types";
+import DOMPurify from "dompurify"; // Used to prevent XSS by purifying our Marker data.
 
 const MapContainer = dynamic(() => import("react-leaflet").then((m) => m.MapContainer), {
   ssr: false,
@@ -81,32 +82,42 @@ export default function LeafletMap({
               popupAnchor: [0, iconSize / -2],
             })}
             draggable={marker.draggable}
+            bubblingMouseEvents={false}
             position={marker.position}
             eventHandlers={{
               add: (e) => {
                 updateMarker(i, "ref", e.target);
               },
               dragstart: (e) => {
-                console.log("drag start");
-                // updateSelectedMarker(i);
+                marker.dragging = true;
               },
               dragend: (e) => {
-                console.log("drag end");
+                marker.dragging = false;
                 const latLng = e.target.getLatLng();
                 onMarkerMove(i, [latLng.lat, latLng.lng] as [number, number]);
               },
-              mouseover: (e) => {
-                updateSelectedMarker(i);
-              },
-              mouseout: (e) => {
-                if (marker.ref?.isPopupOpen()) return;
-                updateSelectedMarker(-1);
-              },
               click: (e) => {
+                console.log(marker.dragging);
                 updateSelectedMarker(i);
               },
             }}>
-            <Popup>{marker.title}</Popup>
+            <Popup closeButton={false}>
+              <h3 style={{ marginBottom: 5, textAlign: "center" }}>{marker.title}</h3>
+              {marker.description && (
+                <p
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      marker.description
+                        ? marker.description
+                            .replace(/^([\w\s]+?): /gm, "<b>$1: </b>")
+                            .replace(/\n/g, "<br>")
+                        : ""
+                    ),
+                  }}
+                  style={{ margin: 0 }}
+                />
+              )}
+            </Popup>
           </Marker>
         ))}
       </MapContainer>
