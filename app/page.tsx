@@ -67,7 +67,16 @@ export default function MapPage({
         draggable: false,
       };
 
-      console.log("TODO: should create marker", marker);
+      setMarkers((prev) => {
+        const updated = [...prev];
+        updated.push(marker);
+        updated.forEach((e) => (e.ref = undefined)); // Remove all refs to reset them.
+        return updated;
+      });
+
+      map?.flyTo(marker.position, map?.getZoom());
+      setSelectedMarker(markers.length);
+
       return "Marker Created!";
     } catch (e) {
       return String(e);
@@ -91,7 +100,7 @@ export default function MapPage({
                 key={i}
                 className={selectedMarker == i ? "active" : ""}
                 onClick={(e) => {
-                  map?.flyTo(marker.position, 13);
+                  map?.flyTo(marker.position, map?.getZoom());
                   setSelectedMarker(i);
 
                   // If the user clicked on our actual li and not another item, change our focus away.
