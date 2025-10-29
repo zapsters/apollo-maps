@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import L, { Draggable } from "leaflet";
+import L, { Draggable, LatLngExpression } from "leaflet";
 import type { MarkerType } from "./types";
 import { Panel, PanelGroup, PanelResizeHandle } from "react-resizable-panels";
 
@@ -53,6 +53,26 @@ export default function MapPage({
       return updated;
     });
   };
+
+  function addMarker(formData: FormData) {
+    try {
+      const markerCords = (formData.get("latLang") as string).split(",");
+      if (markerCords.length != 2) throw new Error("Invalid Cords Syntax");
+      const markerCordsInt = markerCords.map((cord) => parseInt(cord)) as LatLngExpression;
+
+      const marker: MarkerType = {
+        title: (formData.get("title") as string) || "",
+        description: (formData.get("desc") as string) || "",
+        position: markerCordsInt,
+        draggable: false,
+      };
+
+      console.log("TODO: should create marker", marker);
+      return "Marker Created!";
+    } catch (e) {
+      return String(e);
+    }
+  }
 
   return (
     <main style={{ display: "flex" }}>
@@ -127,10 +147,16 @@ export default function MapPage({
         <Panel id="addMarkers-panel" defaultSize={defaultLayout[1]} className="panel addMarker">
           <h1>Add marker</h1>
           <hr />
-          <form method="" className="marker-create">
-            <div>
+          <form
+            className="marker-create"
+            action={(e) => {
+              const rspText = document.getElementById("CreateMarkerResponse");
+              if (rspText) rspText.innerHTML = addMarker(e);
+            }}>
+            <div style={{ display: "flex" }}>
               <label htmlFor="marker-create-latLang">Title: </label>
               <input
+                style={{ flex: 1 }}
                 type="text"
                 id="marker-create-title"
                 title="Marker Title"
@@ -138,9 +164,10 @@ export default function MapPage({
                 placeholder="Marker Title"
               />
             </div>
-            <div>
+            <div style={{ display: "flex" }}>
               <label htmlFor="marker-create-latLang">Coordinates: </label>
               <input
+                style={{ flex: 1 }}
                 type="text"
                 id="marker-create-latLang"
                 name="latLang"
@@ -150,13 +177,14 @@ export default function MapPage({
             </div>
             <textarea
               className="textarea description"
-              name="Maker Description"
+              name="desc"
               placeholder="description..."
               id="marker-create-description"></textarea>
             <button className="buttonMain" type="submit">
               Create Marker
             </button>
           </form>
+          <span id="CreateMarkerResponse"></span>
         </Panel>
       </PanelGroup>
 

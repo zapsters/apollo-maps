@@ -44,9 +44,7 @@ export default function LeafletMap({
   const MapEvents = () => {
     useMapEvents({
       click(e) {
-        // setState your coords here
-        // coords exist in "e.latlng.lat" and "e.latlng.lng"
-        console.log(e.latlng.lat, e.latlng.lng);
+        // console.log(e.latlng.lat, e.latlng.lng);
         updateSelectedMarker(-1);
       },
     });
@@ -97,7 +95,6 @@ export default function LeafletMap({
                 onMarkerMove(i, [latLng.lat, latLng.lng] as [number, number]);
               },
               click: (e) => {
-                console.log(marker.dragging);
                 updateSelectedMarker(i);
               },
             }}>
